@@ -30,16 +30,38 @@ Team Members:
 
 # Part 1
 
-
-
 # Part 2
 
-
 ```{r}
+# Define UI for the Shiny app
+# I HAVE AN EXTRA PARTENTHESIS SOMEWHERE AHHHH
+
+ui <- fluidPage(      #For a responsive web layout
+  titlePanel("Wikipedia & Stock Price Correlation"),     #This goes at the top of the app
+  
+  #This is where the user will input Wiki and stock -  For now let's stick to TESLA
+  sidebarLayout(
+    sidebarPanel(
+      textInput("stock", "Enter Stock Ticker (e.g., TSLA)", "TSLA"),
+      textInput("wiki_page", "Enter Wikipedia Page (e.g., Tesla, Inc.)", "Tesla, Inc."),
+      dateRangeInput("date_range", "Select Date Range",
+                     start = "2024-01-01", end = Sys.Date())
+    ),
+    
+    #This is  the output
+    mainPanel(
+      plotOutput("plot"),
+      textOutput("error"),
+      
+      # New output for model summary and prediction results
+      verbatimTextOutput("model_summary"),  #  For the caret prediction model
+      textOutput("prediction")               # Either UP or DOWN
+    )
+  )
+)
+
 
 
 
 
 ```
-
-

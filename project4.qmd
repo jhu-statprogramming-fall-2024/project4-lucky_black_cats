@@ -1,0 +1,45 @@
+---
+title: "project4"
+format: html
+editor: visual
+---
+
+## Project 4: Using Wikipedia Data to Predict Stock Prizes
+
+Team Members:
+
+-   Mateo Bandala Jacques \| abandal1\@jh.edu
+
+-   María Camila Restrepo \| mrestre\@jh.edu
+
+-   Mitali Joshi \| mjoshi13\@jh.edu
+
+# Setup
+
+```{r}
+
+
+
+
+
+```
+
+::: callout-note
+## First, we will build and validate the predictive model that will go in our user interface
+:::
+
+# Part 1
+
+
+
+# Part 2
+
+
+```{r}
+
+
+
+
+```
+
+

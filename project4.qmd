@@ -18,7 +18,11 @@ Team Members:
 
 ```{r}
 
-
+library(httr)
+library(jsonlite)
+library(quantmod)
+library(dplyr)
+library(caret)
 
 
 
@@ -28,7 +32,179 @@ Team Members:
 ## First, we will build and validate the predictive model that will go in our user interface
 :::
 
-# Part 1
+# Part 1: Train and test a machine learning algorithm to predict stock prizes
+
+## Set-up the functions to extract the data
+
+```{r}
+
+# First, we will create a function to get the wikipedia page views
+
+get_wiki_pageviews <- function(page, start_date, end_date) {                # Input page and dates
+  page <- gsub(" ", "_", page)  # Fix the URL name
+  url <- paste0(
+    "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/",
+    "en.wikipedia/all-access/all-agents/", page, "/daily/",
+    format(as.Date(start_date), "%Y%m%d"), "/", format(as.Date(end_date), "%Y%m%d")
+  )
+  
+  response <- GET(url)
+  
+  if (status_code(response) == 200) {      #200 is the succesful response
+    # Parse the JSON response
+    parsed_data <- fromJSON(content(response, "text", encoding = "UTF-8"))   #Encoding 
+    
+    # This extracts a datframe
+    items <- parsed_data$items
+    
+    # Some data wrangling from the above step
+    df <- items %>%
+      dplyr::mutate(
+        Date = as.Date(substr(timestamp, 1, 8), "%Y%m%d")  # convert to date for the dataframe
+      ) %>%
+      dplyr::select(Date, views) %>%
+      dplyr::rename(Pageviews = views)  # 
+    
+    return(df)
+  } else {
+    stop("Failed to retrieve Wikipedia page views. HTTP status: ", status_code(response))
+  }
+}
+
+
+#Simple tests
+
+get_wiki_pageviews("Tesla, Inc.", "2024-09-01" ,"2024-09-06")
+get_wiki_pageviews("Donald Trump", "2024-09-01" ,"2024-09-06")
+get_wiki_pageviews("Chihuahua_(state)", "2024-09-01" ,"2024-09-06") #Mateo's home state :)
+
+
+
+# Now pull the stock (ticker) data from YAHOO
+get_stock_data <- function(ticker, start_date, end_date) {
+  stock_data <- getSymbols(
+    ticker, src = "yahoo", from = as.Date(start_date), to = as.Date(end_date),
+    auto.assign = FALSE
+  )
+  stock_df <- data.frame(
+    Date = index(stock_data),
+    Stock_Close = as.numeric(Cl(stock_data))
+  )
+  return(stock_df)
+}
+
+
+#Some more simple tests for this
+
+get_stock_data("TSLA", "2024-09-01" ,"2024-09-06")
+get_stock_data("AAPL", "2024-09-01" ,"2024-09-06")
+get_stock_data("BBVA", "2024-09-01" ,"2024-09-06")  #This works
+
+
+```
+
+## Prepare the data
+
+
+```{r}
+
+prepare_ml_data <- function(data) {
+  # Lag the pageviews (or else we will predict the past)
+  for (i in 1:7) {   #I think 7 days are enough
+    data[[paste0("Pageviews_lag", i)]] <- dplyr::lag(data$Pageviews, n = i)
+  }
+  
+  # Outcome will be 1 = UP up, 0 = DOWN or no change
+  data$Price_Change <- ifelse(dplyr::lead(data$Stock_Close) > data$Stock_Close, 1, 0)
+  
+  # Remove rows with NA values
+  data <- na.omit(data)
+  
+  return(data)
+}
+
+
+
+```
+
+
+
+
+
+## Train and test the model
+
+```{r}
+ 
+
+
+# Train and test the model
+train_and_test <- function(data) {
+  # Frist six days are training
+  train_data <- data[1:6, ]
+  
+  # The seventh day is testing (MAKE SURE THIS ISN'T ALWAYS THE SAME WEEKDAY BY VARYING DATES)
+  test_data <- data[7, ]
+  
+  # We're going to use a logistic regression model (simple UP or DOWN) - this is what truly matters to investors
+  model <- train(
+    Price_Change ~ ., 
+    data = train_data[, c("Price_Change", paste0("Pageviews_lag", 1:7))],   #These are actually the LAGGED dates
+    method = "glm", 
+    family = "binomial"
+  )
+  
+  # Predict for the seventh day
+  prediction <- predict(model, newdata = test_data[, paste0("Pageviews_lag", 1:7), drop = FALSE])
+  
+  # Return the prediction and actual value
+  return(list(
+    prediction = prediction,
+    actual = test_data$Price_Change
+  ))
+}
+
+
+
+```
+
+## Run all the prior for some Wiki pages and tickers, and see how well it performs
+
+```{r}
+stocks <- c("TSLA", "AAPL")
+wiki_pages <- c("Tesla, Inc.", "Apple_Inc.")
+start_date <- "2024-01-01"
+end_date <- "2024-01-07"
+
+# Loop through associations
+results <- lapply(1:length(stocks), function(i) {
+  stock <- stocks[i]
+  wiki_page <- wiki_pages[i]
+  
+  # Pull data
+  wiki_data <- get_wiki_pageviews(wiki_page, start_date, end_date)
+  stock_data <- get_stock_data(stock, start_date, end_date)
+  
+  # Merge data
+  combined_data <- merge(wiki_data, stock_data, by = "Date")
+  
+  # Prepare data
+  prepared_data <- prepare_ml_data(combined_data)
+  
+  # Train and test
+  train_and_test(prepared_data)
+})
+
+# Print results
+results
+
+
+
+
+
+
+
+```
+
 
 # Part 2
 

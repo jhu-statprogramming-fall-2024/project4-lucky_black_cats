@@ -144,7 +144,7 @@ print(prepared_real_data)
 
 
 
-## Train and test the model
+## Train and test the model.
 
 ```{r}
  

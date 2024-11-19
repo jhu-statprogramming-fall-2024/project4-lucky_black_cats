@@ -108,6 +108,8 @@ get_stock_data("BBVA", "2024-09-01" ,"2024-09-06")  #This works
 
 ```{r}
 
+
+#This will take in the data created above
 prepare_ml_data <- function(data) {
   # Lag the pageviews (or else we will predict the past)
   for (i in 1:7) {   #I think 7 days are enough
@@ -123,6 +125,17 @@ prepare_ml_data <- function(data) {
   return(data)
 }
 
+
+
+#Let's test it with our data
+
+wiki_data <- get_wiki_pageviews("Tesla, Inc.", "2024-01-01", "2024-01-20")
+stock_data <- get_stock_data("TSLA", "2024-01-01", "2024-01-20")
+combined_data <- merge(wiki_data, stock_data, by = "Date")
+
+# Apply prepare_ml_data to real data
+prepared_real_data <- prepare_ml_data(combined_data)
+print(prepared_real_data)
 
 
 ```

@@ -32,7 +32,9 @@ library(caret)
 library(tidyverse)
 
 
-
+if(!require("shiny"))
+install.packages("shiny")
+library(shiny)
 ```
 
 ::: callout-note
@@ -256,10 +258,86 @@ ui <- fluidPage(      #For a responsive web layout
 
 # And define the server logic
 
-#mitali: Add the server logic HERE. Don't redefine functions I already created outside the server logic
+server <- function(input, output, session) {
+  # Reactive expression to get data based on user inputs
+  data <- reactive({
+    req(input$stock, input$wiki_page, input$date_range)
+    
+    # Fetch Wikipedia data
+    wiki_data <- get_wiki_pageviews(input$wiki_page, input$date_range[1], input$date_range[2])
+    if (is.null(wiki_data)) {
+      output$error <- renderText("Error: Unable to retrieve Wikipedia page views.")
+      return(NULL)
+    }
+    
+    # Fetch stock data
+    stock_data <- get_stock_data(input$stock, input$date_range[1], input$date_range[2])
+    if (is.null(stock_data)) {
+      output$error <- renderText("Error: Unable to retrieve stock data.")
+      return(NULL)
+    }
+    
+    # Merge and normalize data
+    combined_data <- merge(wiki_data, stock_data, by = "Date")
+    combined_data$Pageviews_norm <- (combined_data$Pageviews - min(combined_data$Pageviews)) /
+      (max(combined_data$Pageviews) - min(combined_data$Pageviews))
+    combined_data$Stock_Close_norm <- (combined_data$Stock_Close - min(combined_data$Stock_Close)) /
+      (max(combined_data$Stock_Close) - min(combined_data$Stock_Close))
+    
+    output$error <- renderText("")  # Clear error message
+    return(combined_data)
+  })
+  
+  # Reactive expression to prepare data
+  prepared_data <- reactive({
+    req(data())
+    prepare_ml_data(data())
+  })
+  
+  # Reactive expression to train the model
+  trained_model <- reactive({
+    req(prepared_data())
+    train_model(prepared_data())
+  })
+  
+  # Display model summary
+  output$model_summary <- renderPrint({
+    req(trained_model())
+    summary(trained_model())
+  })
+  
+  # Predict next day's price movement
+  output$prediction <- renderText({
+    req(trained_model(), prepared_data())
+    new_data <- prepared_data()[nrow(prepared_data()), paste0("Pageviews_lag", 1:7), drop = FALSE]
+    prediction <- predict(trained_model(), newdata = new_data)
+    if (prediction == 1) {
+      return("Predicted Price Movement: UP")
+    } else {
+      return("Predicted Price Movement: DOWN")
+    }
+  })
+  
+  # Plot output
+  output$plot <- renderPlot({
+    req(data())
+    combined_data <- data()
+    ggplot(combined_data, aes(x = Date)) +
+      geom_line(aes(y = Pageviews_norm, color = "Pageviews")) +
+      geom_line(aes(y = Stock_Close_norm, color = "Stock Price")) +
+      labs(
+        title = paste("Normalized Wikipedia Pageviews and Stock Price for", input$stock),
+        x = "Date",
+        y = "Normalized Scale (0-1)"
+      ) +
+      scale_color_manual(values = c("Pageviews" = "blue", "Stock Price" = "red")) +
+      theme_minimal() +
+      theme(legend.position = "bottom")
+  })
+}
+
+shinyApp(ui = ui, server = server)
 
 
 
 ```
-
-

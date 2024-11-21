@@ -136,8 +136,8 @@ prepare_ml_data <- function(data) {
 
 #Let's test it with our data
 
-wiki_data <- get_wiki_pageviews("Tesla, Inc.", "2024-01-01", "2024-01-20")
-stock_data <- get_stock_data("TSLA", "2024-01-01", "2024-01-20")
+wiki_data <- get_wiki_pageviews("Tesla, Inc.", "2024-01-01", "2024-03-01") #Make sure this is at least TWO months! (see below)
+stock_data <- get_stock_data("TSLA", "2024-01-01", "2024-03-01")
 combined_data <- merge(wiki_data, stock_data, by = "Date")
 
 # Apply prepare_ml_data to real data
@@ -151,25 +151,24 @@ print(prepared_real_data)
 
 ```{r}
  
-
-
-# Train and test the model
 train_and_test <- function(data) {
-  # Frist six days are training
-  train_data <- data[1:6, ]
+  # Use all rows except the last for training (I had to increase this or else the model fails!)
+  train_data <- data[1:(nrow(data) - 1), ]   
+  test_data <- data[nrow(data), ]  # The last row is the test set to test it
   
-  # The seventh day is testing (MAKE SURE THIS ISN'T ALWAYS THE SAME WEEKDAY BY VARYING DATES)
-  test_data <- data[7, ]
+  # Force the outcome to factor (this crashed it earlier)
+  train_data$Price_Change <- as.factor(train_data$Price_Change)
   
-  # We're going to use a logistic regression model (simple UP or DOWN) - this is what truly matters to investors
+  # Train logistic regression model
   model <- train(
     Price_Change ~ ., 
-    data = train_data[, c("Price_Change", paste0("Pageviews_lag", 1:7))],   #These are actually the LAGGED dates
+    data = train_data[, c("Price_Change", paste0("Pageviews_lag", 1:7))],  #These are the VARIABLES, do NOT change to 1:nrow
     method = "glm", 
-    family = "binomial"
+    family = "binomial",
+    trControl = trainControl(method = "none")  # Disable cross-validation or it crashes
   )
   
-  # Predict for the seventh day
+  # Predict for the test day (last now)
   prediction <- predict(model, newdata = test_data[, paste0("Pageviews_lag", 1:7), drop = FALSE])
   
   # Return the prediction and actual value
@@ -179,7 +178,7 @@ train_and_test <- function(data) {
   ))
 }
 
-
+train_and_test(prepared_real_data) #Wow! actually actually predicted :)
 
 ```
 

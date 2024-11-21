@@ -178,17 +178,22 @@ train_and_test <- function(data) {
   ))
 }
 
-train_and_test(prepared_real_data) #Wow! actually actually predicted :)
+train_and_test(prepared_real_data) #Wow! actually actually predicted :)
 
 ```
 
 ## Run all the prior for some Wiki pages and tickers, and see how well it performs
 
+::: callout-note
+## Do NOT run the next part unless necessary, as it makes TEN requests to each of the APIs
+:::
+
+
 ```{r}
-stocks <- c("TSLA", "AAPL")
-wiki_pages <- c("Tesla, Inc.", "Apple_Inc.")
-start_date <- "2024-01-01"
-end_date <- "2024-01-17"
+stocks <- c("TSLA", "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NFLX", "NVDA", "BRK-B", "JNJ")
+wiki_pages <- c("Tesla, Inc.", "Apple_Inc.", "Microsoft", "Alphabet_Inc.", "Amazon_(company)", "Meta_Platforms", "Netflix", "Nvidia", "Berkshire_Hathaway", "Johnson_%26_Johnson")
+start_date <- "2024-03-01"
+end_date <- "2024-05-01"
 
 # Loop through associations
 results <- lapply(1:length(stocks), function(i) {
@@ -212,10 +217,7 @@ results <- lapply(1:length(stocks), function(i) {
 # Print results
 results
 
-
-
-
-
+# The model worked on 6/10
 
 
 ```

@@ -188,7 +188,6 @@ train_and_test(prepared_real_data) #Wow! actually actually predicted :)
 ## Do NOT run the next part unless necessary, as it makes TEN requests to each of the APIs
 :::
 
-
 ```{r}
 stocks <- c("TSLA", "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NFLX", "NVDA", "BRK-B", "JNJ")
 wiki_pages <- c("Tesla, Inc.", "Apple_Inc.", "Microsoft", "Alphabet_Inc.", "Amazon_(company)", "Meta_Platforms", "Netflix", "Nvidia", "Berkshire_Hathaway", "Johnson_%26_Johnson")
@@ -255,5 +254,12 @@ ui <- fluidPage(      #For a responsive web layout
 
 
 
+# And define the server logic
+
+#mitali: Add the server logic HERE. Don't redefine functions I already created outside the server logic
+
+
 
 ```
+
+

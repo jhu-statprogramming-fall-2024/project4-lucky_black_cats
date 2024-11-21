@@ -23,6 +23,7 @@ if (!require("jsonlite")) install.packages("jsonlite")
 if (!require("quantmod")) install.packages("quantmod")
 if (!require("dplyr")) install.packages("dplyr")
 if (!require("caret")) install.packages("caret")
+if (!require("shiny")) install.packages("shiny")
 
 library(httr)
 library(jsonlite)
@@ -30,11 +31,9 @@ library(quantmod)
 library(dplyr)
 library(caret)
 library(tidyverse)
-
-
-if(!require("shiny"))
-install.packages("shiny")
 library(shiny)
+
+
 ```
 
 ::: callout-note
@@ -86,8 +85,8 @@ get_wiki_pageviews <- function(page, start_date, end_date) {                # In
 get_wiki_pageviews("Tesla, Inc.", "2024-09-01" ,"2024-09-06")
 get_wiki_pageviews("Donald Trump", "2024-09-01" ,"2024-09-06")
 get_wiki_pageviews("Chihuahua_(state)", "2024-09-01" ,"2024-09-06") #Mateo's home state :)
-get_wiki_pageviews("Medellín", "2024-09-01" ,"2024-09-06") #Camila's home city, which of course has more views than Chihuaua
-
+get_wiki_pageviews("Medellín", "2024-09-01" ,"2024-09-06") #Camila's home city, which of course has more views than Chihuahua
+get_wiki_pageviews("Raleigh,_North_Carolina", "2024-09-01" ,"2024-09-06") #And mitali's (Mitali wins)
 
 
 # Now pull the stock (ticker) data from YAHOO
@@ -252,6 +251,23 @@ ui <- fluidPage(      #For a responsive web layout
     )
   )
 )
+
+
+# Add the training function outside the server logic
+
+train_model <- function(data) {
+  predictors <- paste0("Pageviews_lag", 1:7)
+  train_control <- trainControl(method = "cv", number = 5)
+  model <- train(
+    Price_Change ~ ., 
+    data = data[, c("Price_Change", predictors)], 
+    method = "glm", 
+    family = "binomial",
+    trControl = train_control
+  )
+  return(model)
+}
+
 
 
 

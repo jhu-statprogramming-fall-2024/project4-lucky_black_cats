@@ -231,6 +231,19 @@ results
 ui <- fluidPage(      #For a responsive web layout
   titlePanel("Wikipedia & Stock Price Correlation"),     #This goes at the top of the app
   
+#Add a description of the machine learning model
+fluidRow(
+  column(12,
+         h4("About This Tool"),
+         p("This tool uses a machine learning algorithm (logistic regression) to analyze the relationship 
+             between Wikipedia pageviews and stock price movements. It uses the number of Wikipedia pageviews 
+             for the past 7 days (lagged data) to predict whether the stock price will go up or down 
+             on the last day of the selected date range."),
+         div(
+           style = "background-color: #f2f2f2; padding: 10px; border-radius: 5px; text-align: center; font-weight: bold;",
+           "For best results, select a minimum range of 3 months."
+         ))),
+  
   #This is where the user will input Wiki and stock -  For now let's stick to TESLA
   sidebarLayout(
     sidebarPanel(
@@ -244,10 +257,8 @@ ui <- fluidPage(      #For a responsive web layout
     mainPanel(
       plotOutput("plot"),
       textOutput("error"),
-      
-      # New output for model summary and prediction results
-      verbatimTextOutput("model_summary"),  #  For the caret prediction model
-      textOutput("prediction")               # Either UP or DOWN
+      verbatimTextOutput("model_summary"),
+      uiOutput("prediction")  # Updated to handle dynamic banners
     )
   )
 )

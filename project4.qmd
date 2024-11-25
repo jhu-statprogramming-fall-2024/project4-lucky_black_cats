@@ -269,6 +269,10 @@ fluidRow(
 train_model <- function(data) {
   predictors <- paste0("Pageviews_lag", 1:7)
   train_control <- trainControl(method = "cv", number = 5)
+  
+  # Convert Price_Change to a factor
+  data$Price_Change <- as.factor(data$Price_Change)
+  
   model <- train(
     Price_Change ~ ., 
     data = data[, c("Price_Change", predictors)], 
@@ -276,10 +280,8 @@ train_model <- function(data) {
     family = "binomial",
     trControl = train_control
   )
-  return(model)
+ return(model)
 }
-
-
 
 
 

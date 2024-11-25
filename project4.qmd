@@ -334,18 +334,39 @@ server <- function(input, output, session) {
     req(trained_model())
     summary(trained_model())
   })
-  
+
   # Predict next day's price movement
-  output$prediction <- renderText({
+  output$prediction <- renderUI({
     req(trained_model(), prepared_data())
+    
+    # Get the prediction
     new_data <- prepared_data()[nrow(prepared_data()), paste0("Pageviews_lag", 1:7), drop = FALSE]
     prediction <- predict(trained_model(), newdata = new_data)
+    
+    # Define message and color
     if (prediction == 1) {
-      return("Predicted Price Movement: UP")
+      message <- "Predicted Price Movement: UP"
+      color <- "#d4edda"  # Light green
+      text_color <- "#155724"  # Dark green text
     } else {
-      return("Predicted Price Movement: DOWN")
+      message <- "Predicted Price Movement: DOWN"
+      color <- "#f8d7da"  # Light red
+      text_color <- "#721c24"  # Dark red text
     }
-  })
+    
+    # Create a styled banner
+    div(
+      style = paste(
+        "background-color:", color, ";",
+        "color:", text_color, ";",
+        "padding: 10px;",
+        "border-radius: 5px;",
+        "font-weight: bold;",
+        "text-align: center;"
+      ),
+      message
+      )
+    })
   
   # Plot output
   output$plot <- renderPlot({

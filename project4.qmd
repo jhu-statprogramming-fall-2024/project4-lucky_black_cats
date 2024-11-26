@@ -24,6 +24,7 @@ if (!require("quantmod")) install.packages("quantmod")
 if (!require("dplyr")) install.packages("dplyr")
 if (!require("caret")) install.packages("caret")
 if (!require("shiny")) install.packages("shiny")
+if (!require("rsconnect")) install.packages("rsconnect")
 
 library(httr)
 library(jsonlite)
@@ -32,6 +33,7 @@ library(dplyr)
 library(caret)
 library(tidyverse)
 library(shiny)
+library(rsconnect)
 
 
 ```
@@ -284,8 +286,9 @@ train_model <- function(data) {
 }
 
 
-
-# And define the server logic
+###########################################
+##### And define the server logic #########
+############################################
 
 server <- function(input, output, session) {
   # Reactive expression to get data based on user inputs
@@ -329,11 +332,19 @@ server <- function(input, output, session) {
     train_model(prepared_data())
   })
   
-  # Display model summary
-  output$model_summary <- renderPrint({
-    req(trained_model())
-    summary(trained_model())
-  })
+  # Display model summary (I'VE MODIFIED THIS TO MAKE THE OUTPUT MORE SIMPLE!)
+output$model_summary <- renderPrint({
+  req(trained_model())
+  
+  # Get model details
+  model <- trained_model()
+  
+  # Display a simplified version of the model's key details
+  cat("Model Training Complete\n")
+  cat("Cross-validation Accuracy:", round(max(model$results$Accuracy, na.rm = TRUE), 3), "\n")
+  cat("Key Predictors:\n")
+  print(model$finalModel$coefficients)
+})
 
   # Predict next day's price movement
   output$prediction <- renderUI({

@@ -1,7 +1,7 @@
 ---
-title: "project4"
-format: html
-editor: visual
+title: "Stock Market Calculator"
+runtime: shiny
+output: html_document
 ---
 
 ## Project 4: Using Wikipedia Data to Predict Stock Prizes
@@ -192,34 +192,34 @@ train_and_test(prepared_real_data) #Wow! actually actually predicted :)
 :::
 
 ```{r}
-stocks <- c("TSLA", "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NFLX", "NVDA", "BRK-B", "JNJ")
-wiki_pages <- c("Tesla, Inc.", "Apple_Inc.", "Microsoft", "Alphabet_Inc.", "Amazon_(company)", "Meta_Platforms", "Netflix", "Nvidia", "Berkshire_Hathaway", "Johnson_%26_Johnson")
-start_date <- "2024-03-01"
-end_date <- "2024-05-01"
-
-# Loop through associations
-results <- lapply(1:length(stocks), function(i) {
-  stock <- stocks[i]
-  wiki_page <- wiki_pages[i]
-  
-  # Pull data
-  wiki_data <- get_wiki_pageviews(wiki_page, start_date, end_date)
-  stock_data <- get_stock_data(stock, start_date, end_date)
-  
-  # Merge data
-  combined_data <- merge(wiki_data, stock_data, by = "Date")
-  
-  # Prepare data
-  prepared_data <- prepare_ml_data(combined_data)
-  
-  # Train and test
-  train_and_test(prepared_data)
-})
-
-# Print results
-results
-
-# The model worked on 6/10
+# stocks <- c("TSLA", "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NFLX", "NVDA", "BRK-B", "JNJ")
+# wiki_pages <- c("Tesla, Inc.", "Apple_Inc.", "Microsoft", "Alphabet_Inc.", "Amazon_(company)", "Meta_Platforms", "Netflix", "Nvidia", "Berkshire_Hathaway", "Johnson_%26_Johnson")
+# start_date <- "2024-03-01"
+# end_date <- "2024-05-01"
+# 
+# # Loop through associations
+# results <- lapply(1:length(stocks), function(i) {
+#   stock <- stocks[i]
+#   wiki_page <- wiki_pages[i]
+#   
+#   # Pull data
+#   wiki_data <- get_wiki_pageviews(wiki_page, start_date, end_date)
+#   stock_data <- get_stock_data(stock, start_date, end_date)
+#   
+#   # Merge data
+#   combined_data <- merge(wiki_data, stock_data, by = "Date")
+#   
+#   # Prepare data
+#   prepared_data <- prepare_ml_data(combined_data)
+#   
+#   # Train and test
+#   train_and_test(prepared_data)
+# })
+# 
+# # Print results
+# results
+# 
+# # The model worked on 6/10
 
 
 ```
@@ -399,6 +399,8 @@ output$model_summary <- renderPrint({
 
 shinyApp(ui = ui, server = server)
 
+
+#rsconnect::deployApp("/Users/antoniobandala/Desktop/project4/")
 
 
 ```

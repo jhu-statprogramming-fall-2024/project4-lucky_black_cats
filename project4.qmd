@@ -48,7 +48,7 @@ library(rsconnect)
 
 ```{r}
 
-# First, we will create a function to get the wikipedia page views
+# First, we will create a function to get the Wikipedia page views
 
 get_wiki_pageviews <- function(page, start_date, end_date) {                # Input page and dates
   page <- gsub(" ", "_", page)  # Fix the URL name
@@ -228,7 +228,7 @@ train_and_test(prepared_real_data) #Wow! actually actually predicted :)
 
 ```{r}
 # Define UI for the Shiny app
-# I HAVE AN EXTRA PARTENTHESIS SOMEWHERE AHHHH
+# I have found and fixed the extra parenthesis that we had somewhere
 
 ui <- fluidPage(      #For a responsive web layout
   titlePanel("Wikipedia & Stock Price Correlation"),     #This goes at the top of the app
@@ -398,9 +398,6 @@ output$model_summary <- renderPrint({
 }
 
 shinyApp(ui = ui, server = server)
-
-
-#rsconnect::deployApp("/Users/antoniobandala/Desktop/project4/")
 
 
 ```

@@ -14,6 +14,16 @@ Team Members:
 
 -   Mitali Joshi \| mjoshi13\@jh.edu
 
+# Research question  
+
+Can machine learning methods be used to build an equation that accurately predicts variation in stock prices based on hits to a related Wikipedia page? 
+
+# Importance
+
+Stock prices are influenced by a variety of factors, including company performance, market trends, and investor sentiment. Wikipedia page views can be a proxy for public interest in a company, which may in turn influence stock prices. By analyzing the relationship between Wikipedia page views and stock prices, we can gain insights into how public sentiment affects stock prices and potentially build a predictive model to forecast stock price movements.
+
+The potential to predict stock price movements using machine learning methods based on digital engagement metrics, such as hits to related Wikipedia pages, represents a valuable intersection between finance and data science. Evidently, changes in stock prizes related to major events will lead to hits in Wikipedia pages, but it is also possible that smaller variations in the days leading up to changes in the stock prize can be used to predict such change.  Stock prices are influenced by a variety of factors, including public perception, market sentiment, and media coverage. Wikipedia, being a widely used and accessible source of information, can serve as a proxy for public interest and sentiment toward a company or sector. By developing a predictive model that correlates Wikipedia page views with stock price fluctuations, this study could provide unique insights into how shifts in public attention affect financial markets. Although there are other sources that could be used to better measure public interest (such as: the app formerly known as Twitter†,  Google, or TikTok), their API protocols are complex and it is difficult to extract data, while Wikipedia is transparent about their site meta-data and makes it easy to access.  This approach not only advances our understanding of unconventional data sources in financial modeling but also has practical implications for investors, analysts, and companies looking to anticipate and understand price volatility more dynamically. Furthermore, this research could pave the way for broader applications of web traffic metrics in economic forecasting, potentially reshaping investment strategies and decision-making processes in the financial industry.
+
 # Setup
 
 ```{r}

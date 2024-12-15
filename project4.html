@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="project4_files/libs/clipboard/clipboard.min.js"></script>
@@ -92,21 +111,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
-
 </header>
 
-
-<section id="project-4-using-wikipedia-data-to-predict-stock-prizes" class="level2">
-<h2 class="anchored" data-anchor-id="project-4-using-wikipedia-data-to-predict-stock-prizes">Project 4: Using Wikipedia Data to Predict Stock Prizes</h2>
+<section id="project-4-using-wikipedia-data-to-predict-stock-prizes" class="level1">
+<h1>Project 4: Using Wikipedia Data to Predict Stock Prizes</h1>
 <p>Team Members:</p>
 <ul>
 <li><p>Mateo Bandala Jacques | abandal1@jh.edu</p></li>
 <li><p>María Camila Restrepo | mrestre@jh.edu</p></li>
 <li><p>Mitali Joshi | mjoshi13@jh.edu</p></li>
 </ul>
+<section id="research-question" class="level2">
+<h2 class="anchored" data-anchor-id="research-question">Research question</h2>
+<p>Can machine learning methods be used to build an equation that accurately predicts variation in stock prices based on hits to a related Wikipedia page?</p>
 </section>
-<section id="setup" class="level1">
-<h1>Setup</h1>
+<section id="importance-and-previous-literature" class="level2">
+<h2 class="anchored" data-anchor-id="importance-and-previous-literature">Importance and previous literature</h2>
+<p>Generating revenue through the stock exchange is vital for economic growth, allowing companies to raise capital and providing investors with opportunities to grow wealth. Stock market drives business expansion, job creation, and the allocation of resources to high-potential industries.</p>
+<p>The potential to predict stock price movements using machine learning methods based on digital engagement metrics has been explored, with prior research focusing largely on Google search data. Stock prices are influenced by factors like public perception, market sentiment, and media coverage. While major events often lead to spikes in page views, smaller, gradual changes in engagement may offer predictive signals for price fluctuations.</p>
+<p>Huang et al <span class="citation" data-cites="huang2020">(<a href="#ref-huang2020" role="doc-biblioref">Huang, Rojas, and Convery 2020</a>)</span>, developed a trade strategy based on the use of Google Trends for the prediction of stock movements through linear regression models, outperforming traditional buy-and-hold strategies by 40%. Similarly, Shivers et al <span class="citation" data-cites="shivers">(<a href="#ref-shivers" role="doc-biblioref">Shivers, n.d.</a>)</span>. demonstrated a correlation between increased Google search activity and stock price changes, using efficient methods to collect and analyze historical data. Other studies have employed machine learning techniques to assess the predictive power of media data, finding that increased media interest often precedes significant stock price changes.<span class="citation" data-cites="szczygielski2024">(<a href="#ref-szczygielski2024" role="doc-biblioref">Szczygielski et al. 2024</a>)</span>.</p>
+<p>The literature indicates that machine learning can effectively leverage media data to forecast stock behavior. However, the cost and complexity of accessing Google search data pose challenges. Wikipedia offers an accessible and transparent alternative. It is widely used globally as source of information, thus serving as a proxy for public interest and sentiment toward a company or sector. Its community-curated content may reduce biases associated with commercial platforms like Google. Although there are other sources that could be used to better measure public interest (such as: the app formerly known as Twitter†, Google, or TikTok), their API protocols are complex and it is difficult to extract data, while Wikipedia’s metadata, including page view statistics, is easy to access.</p>
+<p>By developing a predictive model that correlates Wikipedia page views with stock price fluctuations, this study aims to uncover new insights into how public attention influences financial markets. This research not only highlights Wikipedia’s potential as a cost-effective and robust data source but also advances understanding of unconventional data in financial modeling, with implications for investors, analysts, and economic forecasting. And by making our model available through a user-friendly interface, we hope to make financial insights more accessible to a wider audience.</p>
+</section>
+<section id="data-sources-and-description" class="level2">
+<h2 class="anchored" data-anchor-id="data-sources-and-description">Data sources and description</h2>
+<p>The main inputs we will be using for our models will be Wikipedia’s daily page view data and stock data from Yahoo Finance.</p>
+<p>We will retrieve Wikipedia’s page view data using the Wikimedia REST API, an open-source and collaborative repository <span class="citation" data-cites="wikimedia">(<a href="#ref-wikimedia" role="doc-biblioref">Foundation, n.d.</a>)</span>. Specifically, we will use the endpoint for fetching per-article page views: https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/ . This API supports requests for page views by article, date, and access method, and it imposes a rate limit of no more than 200 requests per second. Stock market data will be obtained from Yahoo Finance, a free resource for financial data <span class="citation" data-cites="yahoo">(<a href="#ref-yahoo" role="doc-biblioref">Yahoo, n.d.</a>)</span>. In R, we can use the quantmod package, which provides tools for quantitative financial modeling and trading. This package includes functions to access Yahoo Finance data. To retrieve stock data, we must specify the ticker, a unique set of letters or characters assigned to a publicly traded company’s stock. While Yahoo previously offered an official API, it was discontinued in 2017.</p>
+</section>
+<section id="goal-analytic-product" class="level2">
+<h2 class="anchored" data-anchor-id="goal-analytic-product">Goal: Analytic product</h2>
+<p>The final analytic product will be an RShiny app. The user interface will allow the client to select a stock ticker (e.g: TSLA for TESLA), and a Wikipedia page (e.g: Elon Musk). The app will then output a normalized graph comparing Wikipedia page views with Stock price for the selected ticker. Below the output plot, there will be a graph with the results from the machine learning, displaying the expected change on stock price for the next day based on the previous seven days, along with a simple prediction of whether the stock is expected to increase (ie, UP) or decrease (ie, DOWN) on the day following the end of the interval selected by the client.</p>
+</section>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"tidyverse"</span>)) <span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -236,12 +273,14 @@ First, we will build and validate the predictive model that will go in our user 
 </div>
 </div>
 </section>
-<section id="part-1-train-and-test-a-machine-learning-algorithm-to-predict-stock-prizes" class="level1">
-<h1>Part 1: Train and test a machine learning algorithm to predict stock prizes</h1>
+<section id="part-1-train-and-test-a-machine-learning-algorithm-to-predict-stock-prizes" class="level2">
+<h2 class="anchored" data-anchor-id="part-1-train-and-test-a-machine-learning-algorithm-to-predict-stock-prizes">Part 1: Train and test a machine learning algorithm to predict stock prizes</h2>
+</section>
 <section id="set-up-the-functions-to-extract-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="set-up-the-functions-to-extract-the-data">Set-up the functions to extract the data</h2>
+<p>From Wikipedia, we will extract the daily page views for a given page. From Yahoo Finance, we will extract the daily stock closing prices for a given ticker. This will take the user’s inputs of the page name, ticker, and date range, and return the relevant data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we will create a function to get the wikipedia page views</span></span>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we will create a function to get the Wikipedia page views</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>get_wiki_pageviews <span class="ot">&lt;-</span> <span class="cf">function</span>(page, start_date, end_date) {                <span class="co"># Input page and dates</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  page <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">" "</span>, <span class="st">"_"</span>, page)  <span class="co"># Fix the URL name</span></span>
@@ -365,9 +404,8 @@ First, we will build and validate the predictive model that will go in our user 
 3 2024-09-05       10.13</code></pre>
 </div>
 </div>
-</section>
-<section id="prepare-the-data" class="level2">
-<h2 class="anchored" data-anchor-id="prepare-the-data">Prepare the data</h2>
+<section id="prepare-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="prepare-the-data">Prepare the data</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#This will take in the data created above</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>prepare_ml_data <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
@@ -502,8 +540,8 @@ First, we will build and validate the predictive model that will go in our user 
 </div>
 </div>
 </section>
-<section id="train-and-test-the-model." class="level2">
-<h2 class="anchored" data-anchor-id="train-and-test-the-model.">Train and test the model.</h2>
+<section id="train-and-test-the-model." class="level3">
+<h3 class="anchored" data-anchor-id="train-and-test-the-model.">Train and test the model.</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>train_and_test <span class="ot">&lt;-</span> <span class="cf">function</span>(data) {</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Use all rows except the last for training (I had to increase this or else the model fails!)</span></span>
@@ -542,6 +580,7 @@ $actual
 [1] 0</code></pre>
 </div>
 </div>
+</section>
 </section>
 <section id="run-all-the-prior-for-some-wiki-pages-and-tickers-and-see-how-well-it-performs" class="level2">
 <h2 class="anchored" data-anchor-id="run-all-the-prior-for-some-wiki-pages-and-tickers-and-see-how-well-it-performs">Run all the prior for some Wiki pages and tickers, and see how well it performs</h2>
@@ -588,13 +627,13 @@ Do NOT run the next part unless necessary, as it makes TEN requests to each of t
 <span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
 <span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="co"># # The model worked on 6/10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>We tested our model with 20 different Wiki sites and stocks, and ended up with an accuracy of 60%.</p>
 </section>
-</section>
-<section id="part-2" class="level1">
-<h1>Part 2</h1>
+<section id="part-2" class="level2">
+<h2 class="anchored" data-anchor-id="part-2">Part 2</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define UI for the Shiny app</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># I HAVE AN EXTRA PARTENTHESIS SOMEWHERE AHHHH</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># I have found and fixed the extra parenthesis that we had somewhere</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(      <span class="co">#For a responsive web layout</span></span>
 <span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">titlePanel</span>(<span class="st">"Wikipedia &amp; Stock Price Correlation"</span>),     <span class="co">#This goes at the top of the app</span></span>
@@ -765,13 +804,40 @@ Do NOT run the next part unless necessary, as it makes TEN requests to each of t
 <span id="cb38-170"><a href="#cb38-170" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-171"><a href="#cb38-171" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(<span class="at">ui =</span> ui, <span class="at">server =</span> server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><iframe data-deferred-src="appc5d61f04e5362e0260fbe7bc32178d11/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe></p>
+<p><iframe data-deferred-src="app184d84a77988a56f8996ea1b5539dfac/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe></p>
 </div>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#rsconnect::deployApp("/Users/antoniobandala/Desktop/project4/")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="programming-paradigms" class="level2">
+<h2 class="anchored" data-anchor-id="programming-paradigms">Programming Paradigms</h2>
+<p>The project mainly focused on two programming paradigms: functional programming and machine learning. For functional programming, deployment of the final product (an app) was facilitated by the use of multiple functions. For example, one function extracted, for a specified Wikipedia page, in a specific time interval, the number of views, and turned it into a data frame. A second function served a similar purpose to extract stock prices for a specific company. Using Yahoo financial, the function extracted, for a specified date interval, the ticker value (ie, stock price) and convert it to a data frame. A different function will prepare and train the data for machine learning purposes.</p>
+<p>Evidently, the second programming paradigm will be machine learning. The pageviews (lagged) will be the predictors, and the stock price the outcome. Based on this, the model will output a simple final prediction of whether the price will increase or decrease.</p>
+</section>
+<section id="limitations-and-future-work" class="level2">
+<h2 class="anchored" data-anchor-id="limitations-and-future-work">Limitations and Future Work</h2>
+<p>Our product has some limitations in terms of usability and accessibility. The stock market calculator only predicts what happens the following day. This is limiting for those who want to use our stock tracker to properly invest in stocks weeks or months in advance. Another limitation is that the calculator requires some statistical knowledge to interpret the outputs. Namely, the cross-validation percentage and the beta values of our output. Lastly, the stock itself is volatile, and changes occur unexpectedly, so relying on this calculator might not produce the best results if one was to use this on the day of a major event for a certain company or individual.</p>
+<p>For future work, we would like to explore testing a more accurate predictive capability. Additionally, if resources allow, we would like to refine the data with sources that better explore sentiments such as using Twitter or Instagram.</p>
 
-</main>
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-wikimedia" class="csl-entry" role="listitem">
+Foundation, Wikimedia. n.d. <span>“Wikimedia REST API.”</span>
+</div>
+<div id="ref-huang2020" class="csl-entry" role="listitem">
+Huang, M. Y., R. R. Rojas, and P. D. Convery. 2020. <span>“Forecasting Stock Market Movements Using Google Trend Searches.”</span> <em>Empirical Economics</em> 59: 2821–39. <a href="https://doi.org/10.1007/s00181-019-01725-1">https://doi.org/10.1007/s00181-019-01725-1</a>.
+</div>
+<div id="ref-shivers" class="csl-entry" role="listitem">
+Shivers, D. n.d. <span>“Exploring the Relationship Between Google Trends Data and Stock Price Data.”</span> UCSD.
+</div>
+<div id="ref-szczygielski2024" class="csl-entry" role="listitem">
+Szczygielski, Jan Jakub, Ailie Charteris, Princess Rutendo Bwanya, and Janusz Brzeszczyński. 2024. <span>“Google Search Trends and Stock Markets: Sentiment, Attention or Uncertainty?”</span> <em>International Review of Financial Analysis</em> 91. <a href="https://doi.org/10.1016/j.irfa.2023.102549">https://doi.org/10.1016/j.irfa.2023.102549</a>.
+</div>
+<div id="ref-yahoo" class="csl-entry" role="listitem">
+Yahoo. n.d. <span>“Yahoo Finance.”</span>
+</div>
+</div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -852,27 +918,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -882,17 +931,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -904,130 +944,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
-          }
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
-        }
-        return container.innerHTML
-      } else {
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
-      }
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
-          }
-        } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
-            if (note !== null) {
-              const html = processXRef(id, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
+      return note.innerHTML;
     });
   }
       let selectedAnnoteEl;
@@ -1071,7 +988,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1097,32 +1013,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1183,7 +1073,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-
 
 
 

@@ -1,10 +1,12 @@
 ---
 title: "Stock Market Calculator"
 runtime: shiny
+bibliography: references.bib
 output: html_document
+link-citations: true
 ---
 
-## Project 4: Using Wikipedia Data to Predict Stock Prizes
+# Project 4: Using Wikipedia Data to Predict Stock Prizes
 
 Team Members:
 
@@ -14,35 +16,33 @@ Team Members:
 
 -   Mitali Joshi \| mjoshi13\@jh.edu
 
-# Research question  
+## Research question
 
-Can machine learning methods be used to build an equation that accurately predicts variation in stock prices based on hits to a related Wikipedia page? 
+Can machine learning methods be used to build an equation that accurately predicts variation in stock prices based on hits to a related Wikipedia page?
 
-# Importance and previous literature
+## Importance and previous literature
 
-Generating revenue through the stock exchange is vital for economic growth, allowing companies to raise capital and providing investors with opportunities to grow wealth. Stock market drives business expansion, job creation, and the allocation of resources to high-potential industries.  
+Generating revenue through the stock exchange is vital for economic growth, allowing companies to raise capital and providing investors with opportunities to grow wealth. Stock market drives business expansion, job creation, and the allocation of resources to high-potential industries.
 
-The potential to predict stock price movements using machine learning methods based on digital engagement metrics has been explored, with prior research focusing largely on Google search data. Stock prices are influenced by factors like public perception, market sentiment, and media coverage. While major events often lead to spikes in page views, smaller, gradual changes in engagement may offer predictive signals for price fluctuations. 
+The potential to predict stock price movements using machine learning methods based on digital engagement metrics has been explored, with prior research focusing largely on Google search data. Stock prices are influenced by factors like public perception, market sentiment, and media coverage. While major events often lead to spikes in page views, smaller, gradual changes in engagement may offer predictive signals for price fluctuations.
 
-Huang et al (https://link.springer.com/article/10.1007/s00181-019-01725-1)developed a trade strategy based on the use of Google Trends for the prediction of stock movements through linear regression models, outperforming traditional buy-and-hold strategies by 40%. Similarly, Shivers et al (1). demonstrated a correlation between increased Google search activity and stock price changes, using efficient methods to collect and analyze historical data. Other studies have employed machine learning techniques to assess the predictive power of media data, finding that increased media interest often precedes significant stock price changes. (2)
+Huang et al [@huang2020], developed a trade strategy based on the use of Google Trends for the prediction of stock movements through linear regression models, outperforming traditional buy-and-hold strategies by 40%. Similarly, Shivers et al [@shivers]. demonstrated a correlation between increased Google search activity and stock price changes, using efficient methods to collect and analyze historical data. Other studies have employed machine learning techniques to assess the predictive power of media data, finding that increased media interest often precedes significant stock price changes.[@szczygielski2024].
 
-The literature indicates that machine learning can effectively leverage media data to forecast stock behavior. However, the cost and complexity of accessing Google search data pose challenges. Wikipedia offers an accessible and transparent alternative. It is widely used globally as source of information, thus serving as a proxy for public interest and sentiment toward a company or sector. Its community-curated content may reduce biases associated with commercial platforms like Google. Although there are other sources that could be used to better measure public interest (such as: the app formerly known as Twitter†, Google, or TikTok), their API protocols are complex and it is difficult to extract data, while Wikipedia’s metadata, including page view statistics, is easy to access. 
+The literature indicates that machine learning can effectively leverage media data to forecast stock behavior. However, the cost and complexity of accessing Google search data pose challenges. Wikipedia offers an accessible and transparent alternative. It is widely used globally as source of information, thus serving as a proxy for public interest and sentiment toward a company or sector. Its community-curated content may reduce biases associated with commercial platforms like Google. Although there are other sources that could be used to better measure public interest (such as: the app formerly known as Twitter†, Google, or TikTok), their API protocols are complex and it is difficult to extract data, while Wikipedia’s metadata, including page view statistics, is easy to access.
 
 By developing a predictive model that correlates Wikipedia page views with stock price fluctuations, this study aims to uncover new insights into how public attention influences financial markets. This research not only highlights Wikipedia's potential as a cost-effective and robust data source but also advances understanding of unconventional data in financial modeling, with implications for investors, analysts, and economic forecasting. And by making our model available through a user-friendly interface, we hope to make financial insights more accessible to a wider audience.
 
-# Data sources and description
+## Data sources and description
 
-The main inputs we will be using for our models will be Wikipedia's daily page view data and stock data from Yahoo Finance.  
+The main inputs we will be using for our models will be Wikipedia's daily page view data and stock data from Yahoo Finance.
 
-We will retrieve Wikipedia's page view data using the Wikimedia REST API, an open-source and collaborative repository (3). Specifically, we will use the endpoint for fetching per-article page views: https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/ . 
-This API supports requests for page views by article, date, and access method, and it imposes a rate limit of no more than 200 requests per second. 
-Stock market data will be obtained from Yahoo Finance, a free resource for financial data (4).  In R, we can use the quantmod package, which provides tools for quantitative financial modeling and trading. This package includes functions to access Yahoo Finance data. To retrieve stock data, we must specify the ticker, a unique set of letters or characters assigned to a publicly traded company's stock. While Yahoo previously offered an official API, it was discontinued in 2017.  
+We will retrieve Wikipedia's page view data using the Wikimedia REST API, an open-source and collaborative repository [@wikimedia]. Specifically, we will use the endpoint for fetching per-article page views: https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/ . This API supports requests for page views by article, date, and access method, and it imposes a rate limit of no more than 200 requests per second. Stock market data will be obtained from Yahoo Finance, a free resource for financial data [@yahoo]. In R, we can use the quantmod package, which provides tools for quantitative financial modeling and trading. This package includes functions to access Yahoo Finance data. To retrieve stock data, we must specify the ticker, a unique set of letters or characters assigned to a publicly traded company's stock. While Yahoo previously offered an official API, it was discontinued in 2017.
 
-#Goal: analytical product
+## Goal: Analytic product
 
-The final analytical product will be an RShiny app. The user interface will allow the client to select a stock ticker (e.g: TSLA for TESLA), and a Wikipedia page (e.g: Elon Musk). The app will then output a normalized graph comparing Wikipedia page views with Stock price for the selected ticker. Below the output plot, there will be a graph with the results from the machine learning, displaying the expected change on stock price for the next day based on the previous seven days, along with a simple prediction of whether the stock is expected to increase (ie, UP) or decrease (ie, DOWN) on the day following the end of the interval selected by the client. 
+The final analytic product will be an RShiny app. The user interface will allow the client to select a stock ticker (e.g: TSLA for TESLA), and a Wikipedia page (e.g: Elon Musk). The app will then output a normalized graph comparing Wikipedia page views with Stock price for the selected ticker. Below the output plot, there will be a graph with the results from the machine learning, displaying the expected change on stock price for the next day based on the previous seven days, along with a simple prediction of whether the stock is expected to increase (ie, UP) or decrease (ie, DOWN) on the day following the end of the interval selected by the client.
 
-# Setup
+## Setup
 
 ```{r}
 if (!require("tidyverse")) install.packages("tidyverse")
@@ -70,7 +70,7 @@ library(rsconnect)
 ## First, we will build and validate the predictive model that will go in our user interface
 :::
 
-# Part 1: Train and test a machine learning algorithm to predict stock prizes
+## Part 1: Train and test a machine learning algorithm to predict stock prizes
 
 ## Set-up the functions to extract the data
 
@@ -144,7 +144,7 @@ get_stock_data("BBVA", "2024-09-01" ,"2024-09-06")  #This works
 
 ```
 
-## Prepare the data
+### Prepare the data
 
 ```{r}
 
@@ -180,7 +180,7 @@ print(prepared_real_data)
 
 ```
 
-## Train and test the model.
+### Train and test the model.
 
 ```{r}
  
@@ -256,7 +256,7 @@ train_and_test(prepared_real_data) #Wow! actually actually predicted :)
 
 We tested our model with 20 different Wiki sites and stocks, and ended up with an accuracy of 60%.
 
-# Part 2
+## Part 2
 
 ```{r}
 # Define UI for the Shiny app
@@ -434,6 +434,14 @@ shinyApp(ui = ui, server = server)
 
 ```
 
-# Programming Paradigms
+## Programming Paradigms
 
-# Limitations and future work
+The project mainly focused on two programming paradigms: functional programming and machine learning. For functional programming, deployment of the final product (an app) was facilitated by the use of multiple functions. For example, one function extracted, for a specified Wikipedia page, in a specific time interval, the number of views, and turned it into a data frame. A second function served a similar purpose to extract stock prices for a specific company. Using Yahoo financial, the function extracted, for a specified date interval, the ticker value (ie, stock price) and convert it to a data frame. A different function will prepare and train the data for machine learning purposes.
+
+Evidently, the second programming paradigm will be machine learning. The pageviews (lagged) will be the predictors, and the stock price the outcome. Based on this, the model will output a simple final prediction of whether the price will increase or decrease.
+
+## Limitations and Future Work
+
+Our product has some limitations in terms of usability and accessibility. The stock market calculator only predicts what happens the following day. This is limiting for those who want to use our stock tracker to properly invest in stocks weeks or months in advance. Another limitation is that the calculator requires some statistical knowledge to interpret the outputs. Namely, the cross-validation percentage and the beta values of our output. Lastly, the stock itself is volatile, and changes occur unexpectedly, so relying on this calculator might not produce the best results if one was to use this on the day of a major event for a certain company or individual.
+
+For future work, we would like to explore testing a more accurate predictive capability. Additionally, if resources allow, we would like to refine the data with sources that better explore sentiments such as using Twitter or Instagram.

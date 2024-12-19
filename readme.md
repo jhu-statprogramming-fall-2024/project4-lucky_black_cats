@@ -21,7 +21,7 @@ and therefore United_States should be used in the Wiki field
 
 ### Select a stock ticker. For example, AAPL for Apple, or TSLA for TSLA
 
-### Select dates. We reccomend using at least 3 months of data for better outcomes
+### Select dates. We recommend using at least 3 months of data for better outcomes
 
 
 ## Team members:
